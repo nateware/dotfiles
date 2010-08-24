@@ -14,6 +14,14 @@ alias gi='gem install --no-ri --no-rdoc'
 # For Jeweler
 export JEWELER_OPTS='--bacon --create-repo --gemcutter'
 
+# ImageMagick
+export PATH="/usr/local/ImageMagick/bin:$PATH"
+export DYLD_LIBRARY_PATH="/usr/local/ImageMagick/lib"
+
+# MySQL
+export PATH="/usr/local/mysql/bin:$PATH"
+export DYLD_LIBRARY_PATH="/usr/local/mysql/lib"
+
 # For Amazon EC2
 export EC2_PRIVATE_KEY="$HOME/.ec2/pk-UO255XUYVOVVBXUWADA57YCL7XZZKQDE.pem"
 export EC2_CERT="$HOME/.ec2/cert-UO255XUYVOVVBXUWADA57YCL7XZZKQDE.pem"
@@ -48,7 +56,7 @@ export PATH="$HOME/bin:$HOME/sbin:/usr/local/bin:/usr/local/mysql/bin:/usr/local
 
 # Still needed for old games
 export ORACLE_HOME="/usr/local/oracle/10.2.0.4/client"
-export DYLD_LIBRARY_PATH="$ORACLE_HOME/lib"
+export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$ORACLE_HOME/lib"
 export TNS_ADMIN="$HOME/Workspace/playerconnect/base/webservices/trunk/config"
 export NLS_LANG=".AL32UTF8"
 PATH="$PATH:$ORACLE_HOME/bin"
