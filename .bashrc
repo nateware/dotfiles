@@ -22,6 +22,9 @@ export DYLD_LIBRARY_PATH="/usr/local/ImageMagick/lib"
 export PATH="/usr/local/mysql/bin:$PATH"
 export DYLD_LIBRARY_PATH="/usr/local/mysql/lib"
 
+# MongoDB
+export PATH="$PATH:/usr/local/mongodb/bin"
+
 # For Amazon EC2
 export EC2_PRIVATE_KEY="$HOME/.ec2/pk-UO255XUYVOVVBXUWADA57YCL7XZZKQDE.pem"
 export EC2_CERT="$HOME/.ec2/cert-UO255XUYVOVVBXUWADA57YCL7XZZKQDE.pem"
