@@ -1,5 +1,6 @@
 
 # ~/.bashrc
+umask 022
 export PS1='[\u@\h:\W]\$ '
 
 alias ls='\ls -Gh'
@@ -10,6 +11,7 @@ alias rsync='\rsync --exclude=.svn --exclude=.git --exclude=RCS'
 
 # Don't want local rubydocs - TOO SLOW!
 alias gi='gem install --no-ri --no-rdoc'
+alias bd='bundle --without=production'
 
 # For Jeweler
 export JEWELER_OPTS='--bacon --create-repo --gemcutter'
