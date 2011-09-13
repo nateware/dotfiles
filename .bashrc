@@ -1,7 +1,6 @@
 
 # ~/.bashrc
 umask 022
-export PS1='[\u@\h:\W]\$ '
 
 alias ls='\ls -Gh'
 alias ll='ls -al'
