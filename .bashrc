@@ -13,6 +13,9 @@ alias rsync='\rsync --exclude=.svn --exclude=.git --exclude=RCS'
 alias gi='gem install --no-ri --no-rdoc'
 alias bd='bundle --without=production'
 
+# For ruby version manager
+[ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
+
 # For Jeweler
 export JEWELER_OPTS='--bacon --create-repo --gemcutter'
 
@@ -40,42 +43,37 @@ alias psync="rsync -av -e 'ssh -i $HOME/.ec2/id_rsa-$ec2_user-user -o StrictHost
 export AMAZON_ACCESS_KEY_ID=`cat $HOME/.ec2/access_key_id.txt`
 export AMAZON_SECRET_ACCESS_KEY=`cat $HOME/.ec2/secret_access_key.txt`
 
-export PLAYCO_ROOT=$HOME/Workspace/playerconnect
-if [ -d $PLAYCO_ROOT ]; then
-  for file in $PLAYCO_ROOT/util/sh/*.sh
-  do
-    . $file
-  done
-fi
-
 # Tools for EC2
-export EC2_HOME=/usr/local/ec2-api-tools-current
+export EC2_HOME=/usr/local/ec2-api-tools
 export PATH="$PATH:$EC2_HOME/bin"
 export JAVA_HOME=/Library/Java/Home
 
 # Put our ~/bin *first*
-export PATH="$HOME/bin:$HOME/sbin:/usr/local/bin:/usr/local/mysql/bin:/usr/local/git/bin:/usr/local/pgsql/bin:$PATH:/opt/local/bin:/opt/local/sbin"
+export PATH=`echo "
+  $HOME/bin
+  $HOME/sbin
+  /opt/local/bin
+  /opt/local/sbin
+  /usr/local/bin
+  /usr/local/git/bin
+  /usr/local/pgsql/bin
+  $PATH 
+" | tr -s '[:space:]' ':'`
 
-# For ruby version manager
-[ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
+export JVA=209.40.197.81
+alias jva="ssh -l janetvanarsdale $JVA"
+alias rjva="ssh -l root $JVA"
 
 # Still needed for old games
 export ORACLE_HOME="/usr/local/oracle/10.2.0.4/client"
 export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$ORACLE_HOME/lib"
-export TNS_ADMIN="$HOME/Workspace/playerconnect/base/webservices/trunk/config"
+export TNS_ADMIN="$HOME/tnsadmin"  # Directory
 export NLS_LANG=".AL32UTF8"
 PATH="$PATH:$ORACLE_HOME/bin"
 
-function g {
-  local current_link="$HOME/Workspace/current"
-  if [ ! -d "$current_link" ]; then
-    echo "No valid current project symlink: $current_link" >&2
-    return
-  else
-    local project=`readlink $current_link`
-    [[ "$project" = /* ]] || project="$HOME/Workspace/$project"
-    echo cd $project
-    cd $project
-  fi
-}
+# For fucking with "go" the language
+export GOROOT=$HOME/Workspace/go
+export GOOS=darwin
+export GOARCH=386
+export GOBIN=$HOME/bin
 
