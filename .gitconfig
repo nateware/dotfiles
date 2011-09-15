@@ -1,0 +1,18 @@
+[user]
+	name = Nate Wiger
+	email = nate@wiger.org
+[alias]
+	ci = commit
+	co = checkout
+	st = status
+	up = pull
+	rv = checkout --
+        br = branch -a
+	hard = reset --hard origin/master
+	hist = log --since=1.day --relative-date --stat
+	mine = log --since=1.day --relative-date --stat --committer=nateware
+	pu = !"git fetch origin -v; git fetch upstream -v; git merge upstream/master"
+[color]
+	diff = auto
+	status = auto
+	branch = auto
