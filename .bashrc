@@ -20,7 +20,7 @@ export OS=`uname`
 [ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
 
 # For Jeweler
-export JEWELER_OPTS='--bacon --create-repo --gemcutter'
+export JEWELER_OPTS="--bundler --bacon --create-repo --user-name 'Nate Wiger' --user-email 'nate@wiger.org' --github-username nateware --github-token `cat $HOME/.github-token`"
 
 # Add to PATH but only if it exists
 add_path () {
@@ -84,9 +84,12 @@ if [ -d "$HOME/.ec2" ]; then
   export AMAZON_SECRET_ACCESS_KEY=`cat $HOME/.ec2/secret_access_key.txt`
 fi
 
+if add_path /Library/PostgreSQL/9.0/bin; then
+  . /Library/PostgreSQL/9.0/pg_env.sh
+fi
+
 # Remember add_path prefixes, so the one you want first should be last
 add_path \
-  /Library/PostgreSQL/9.0/bin \
   /usr/local/pgsql/bin \
   /usr/local/git/bin \
   /usr/local/bin \
