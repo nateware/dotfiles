@@ -118,3 +118,12 @@ export GOOS=darwin
 export GOARCH=386
 export GOBIN=$HOME/bin
 
+# Because I'm a moron
+rake () {
+    if [ -f Gemfile ]; then
+        bundle exec rake "$@"
+    else
+        \rake "$@"
+    fi
+}
+
