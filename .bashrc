@@ -10,7 +10,8 @@ alias rsync='\rsync --exclude=.svn --exclude=.git --exclude=RCS'
 
 # Don't want local rubydocs - TOO SLOW!
 alias gi='gem install --no-ri --no-rdoc'
-alias bd='bundle --without=production'
+alias bi='bundle --without=production'
+alias bu='bundle --without=production'
 alias be='bundle exec'
 
 # Platform goodness
