@@ -13,6 +13,9 @@ alias gi='gem install --no-ri --no-rdoc'
 alias bi='bundle --without=production'
 alias bu='bundle --without=production'
 alias be='bundle exec'
+alias ga='git ci -a -m'
+alias gd='git pu && git push -f dev'
+alias gp='git pu'
 
 # Platform goodness
 export OS=`uname`
