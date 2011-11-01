@@ -1,0 +1,8 @@
+#!/bin/sh
+
+for f in $PWD/.[a-z]*
+do
+  b=`basename $f`
+  echo "$HOME/$b => $f"
+  (cd $HOME && rm -f $b && ln -s $f)
+done

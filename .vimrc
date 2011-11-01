@@ -8,7 +8,9 @@
 " git clone git://github.com/tpope/vim-commentary.git
 "
 set nocp
-set ts=2 et shiftwidth=2
+set tabstop=2 shiftwidth=2 expandtab
+set autoindent
+set cindent
 call pathogen#infect()
 syntax on
 filetype plugin indent on
