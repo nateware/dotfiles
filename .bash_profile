@@ -28,11 +28,6 @@ c_bold_white="${c1}1;37${c2}"
 export PS1='[\u@\h:\W]\$ '
 export PS1="[$c_green\u$c_normal@$c_purple\h$c_normal:$c_blue\W$c_normal]\$ "
 
-# Ruby version
-use_ruby=ruby-1.9.2-p290 
-printf "Setting rvm ruby to: $c_red$use_ruby$c_normal\n"
-rvm $use_ruby
 printf $c_red
 type ruby
 printf $c_normal
-
