@@ -7,6 +7,7 @@ alias ll='ls -al'
 alias wget='curl -LO'
 alias ldd='otool -L'
 alias rsync='\rsync --exclude=.svn --exclude=.git --exclude=RCS'
+alias vi='vim -b'
 
 # Don't want local rubydocs - TOO SLOW!
 alias gi='gem install --no-ri --no-rdoc'
