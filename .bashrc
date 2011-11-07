@@ -2,32 +2,6 @@
 # ~/.bashrc
 umask 022
 
-alias ls='\ls -Gh'
-alias ll='ls -al'
-alias wget='curl -LO'
-alias ldd='otool -L'
-alias rsync='\rsync --exclude=.svn --exclude=.git --exclude=RCS'
-alias vi='vim -b'
-
-# Don't want local rubydocs - TOO SLOW!
-alias gi='gem install --no-ri --no-rdoc'
-alias bi='bundle --without=production'
-alias bu='bundle --without=production'
-alias be='bundle exec'
-alias ga='git ci -a -m'
-alias gd='git pu && git push -f dev'
-alias gp='git pu'
-
-# Platform goodness
-export OS=`uname`
-[ "$OS" = Darwin ] && export JAVA_HOME=/Library/Java/Home
-
-# For ruby version manager
-[ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
-
-# For Jeweler
-export JEWELER_OPTS="--bundler --bacon --create-repo --user-name 'Nate Wiger' --user-email 'nate@wiger.org' --github-username nateware --github-token `cat $HOME/.github-token`"
-
 # Add to PATH but only if it exists
 add_path () {
   err=0
@@ -61,6 +35,38 @@ add_path_and_lib () {
     return 1
   fi
 }
+
+# Aliases
+alias ls='\ls -Gh'
+alias ll='ls -al'
+alias wget='curl -LO'
+alias ldd='otool -L'
+alias rsync='\rsync --exclude=.svn --exclude=.git --exclude=RCS'
+alias vi='vim -b'
+
+# Don't want to install rubydocs - TOO SLOW!
+alias gi='gem install --no-ri --no-rdoc'
+alias bi='bundle --without=production'
+alias bu='bundle --without=production'
+alias be='bundle exec'
+alias ga='git ci -a -m'
+alias gd='git pu && git push -f dev'
+alias gp='git pu'
+
+# Change to workspace directory
+wd () {
+  pushd "$HOME/Workspace/$1"*
+}
+
+# Platform goodness
+export OS=`uname`
+[ "$OS" = Darwin ] && export JAVA_HOME=/Library/Java/Home
+
+# For ruby version manager
+[ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
+
+# For Jeweler
+export JEWELER_OPTS="--bundler --bacon --create-repo --user-name 'Nate Wiger' --user-email 'nate@wiger.org' --github-username nateware --github-token `cat $HOME/.github-token`"
 
 # ImageMagick
 add_path_and_lib /usr/local/ImageMagick/bin
