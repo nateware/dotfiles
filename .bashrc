@@ -80,6 +80,8 @@ add_path /usr/local/mongodb/bin
 # Amazon EC2 CLI tools
 export EC2_HOME=/usr/local/ec2-api-tools
 add_path "$EC2_HOME/bin" || unset EC2_HOME
+export RDS_HOME=/usr/local/rds-cli
+add_path "$RDS_HOME/bin" || unset RDS_HOME
 
 # Amazon EC2 gems
 if [ -d "$HOME/.ec2" ]; then
@@ -95,6 +97,10 @@ if [ -d "$HOME/.ec2" ]; then
   export AMAZON_ACCESS_KEY_ID=`cat $HOME/.ec2/access_key_id.txt`
   export AMAZON_SECRET_ACCESS_KEY=`cat $HOME/.ec2/secret_access_key.txt`
 fi
+
+# Sandbox
+alias ash="ssh -i $HOME/.ec2/sandbox-keypair.pem -o StrictHostKeyChecking=no -l ubuntu"
+alias async="rsync -a -e '$HOME/.ec2/sandbox-keypair.pem -o StrictHostKeyChecking=no -l ubuntu'"
 
 if add_path /Library/PostgreSQL/9.0/bin; then
   . /Library/PostgreSQL/9.0/pg_env.sh

@@ -25,8 +25,9 @@ c_bold_yellow="${c1}1;33${c2}"
 c_bold_white="${c1}1;37${c2}"
 
 # Prompt
-export PS1='[\u@\h:\W]\$ '
-export PS1="[$c_green\u$c_normal@$c_purple\h$c_normal:$c_blue\W$c_normal]\$ "
+#export PS1='[\u@\h:\W]\$ '
+#export PS1="[$c_green\u$c_normal@$c_purple\h$c_normal:$c_blue\W$c_normal]\$ "
+export PS1="[\W]\$ "
 
 printf $c_red
 type ruby
