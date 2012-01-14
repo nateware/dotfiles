@@ -52,6 +52,12 @@ alias be='bundle exec'
 alias ga='git ci -a -m'
 alias gd='git pu && git push -f dev'
 alias gp='git pu'
+gap () {
+  ga "$*" && gp
+}
+gapd () {
+  gap "$*" && cap dev deploy
+}
 
 # Change to workspace directory
 wd () {
