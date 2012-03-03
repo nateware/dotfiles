@@ -46,12 +46,18 @@ alias vi='vim -b'
 
 # Don't want to install rubydocs - TOO SLOW!
 alias gi='gem install --no-ri --no-rdoc'
-alias bi='bundle --without=production'
-alias bu='bundle --without=production'
+alias bi='bundle --without=production install'
+alias bu='bundle --without=production update'
 alias be='bundle exec'
 alias ga='git ci -a -m'
 alias gd='git pu && git push -f dev'
 alias gp='git pu'
+gap () {
+  ga "$*" && gp
+}
+gapd () {
+  gap "$*" && cap dev deploy
+}
 
 # Change to workspace directory
 wd () {

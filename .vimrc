@@ -9,8 +9,6 @@
 "
 set nocp
 set tabstop=2 shiftwidth=2 expandtab
-set autoindent
-set cindent
 call pathogen#infect()
 syntax on
 filetype plugin indent on
