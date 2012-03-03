@@ -55,7 +55,11 @@ alias gp='git pu'
 
 # Change to workspace directory
 wd () {
-  pushd "$HOME/Workspace/$1"*
+  if [ $# -eq 0 ]; then
+    pushd "$HOME/Workspace"
+  else
+    pushd "$HOME/Workspace/$1"*
+  fi
 }
 
 # Platform goodness
@@ -134,13 +138,4 @@ export GOROOT=$HOME/Workspace/go
 export GOOS=darwin
 export GOARCH=386
 export GOBIN=$HOME/bin
-
-# Because I'm a moron
-rake () {
-    if [ -f Gemfile ]; then
-        bundle exec rake "$@"
-    else
-        \rake "$@"
-    fi
-}
 
