@@ -32,3 +32,6 @@ export PS1="[\W]\$ "
 printf $c_red
 type ruby
 printf $c_normal
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"

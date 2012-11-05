@@ -76,7 +76,7 @@ export OS=`uname`
 [ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
 
 # For Jeweler
-export JEWELER_OPTS="--bundler --bacon --create-repo --user-name 'Nate Wiger' --user-email 'nate@wiger.org' --github-username nateware --github-token `cat $HOME/.github-token`"
+export JEWELER_OPTS="--bundler --bacon --create-repo --user-name 'Nate Wiger' --user-email 'nate@wiger.org' --github-username nateware --github-token '`cat $HOME/.github-token`'"
 
 # ImageMagick
 add_path_and_lib /usr/local/ImageMagick/bin
@@ -87,30 +87,57 @@ add_path_and_lib /usr/local/mysql/bin
 # MongoDB
 add_path /usr/local/mongodb/bin
 
-# Amazon EC2 CLI tools
+# Amazon EC2 CLI tools (official locations)
 export EC2_HOME=/usr/local/ec2-api-tools
 add_path "$EC2_HOME/bin" || unset EC2_HOME
 export RDS_HOME=/usr/local/rds-cli
 add_path "$RDS_HOME/bin" || unset RDS_HOME
 
-# Amazon EC2 gems
-if [ -d "$HOME/.ec2" ]; then
-  export EC2_PRIVATE_KEY="$HOME/.ec2/pk-UO255XUYVOVVBXUWADA57YCL7XZZKQDE.pem"
-  export EC2_CERT="$HOME/.ec2/cert-UO255XUYVOVVBXUWADA57YCL7XZZKQDE.pem"
-  ec2_user=`cat $HOME/.ec2/ec2_user.txt`
-  alias ess="ssh -i $HOME/.ec2/id_rsa-$ec2_user-keypair -o StrictHostKeyChecking=no -l root"
-  alias esync="rsync -av -e 'ssh -i $HOME/.ec2/id_rsa-$ec2_user-keypair -o StrictHostKeyChecking=no -l root'"
-  alias pss="ssh -i $HOME/.ec2/id_rsa-$ec2_user-user -o StrictHostKeyChecking=no -l $ec2_user"
-  alias psync="rsync -av -e 'ssh -i $HOME/.ec2/id_rsa-$ec2_user-user -o StrictHostKeyChecking=no -l $ec2_user'"
+ec2region () {
+  if [ $# -eq 1 ]; then
+    export EC2_REGION=$1
+    export EC2_URL="http://ec2.$EC2_REGION.amazonaws.com"
+    ec2setenv
+  fi
+  echo "EC2_REGION=$EC2_REGION"
+}
 
-  # For amazon-ec2 gem
-  export AMAZON_ACCESS_KEY_ID=`cat $HOME/.ec2/access_key_id.txt`
-  export AMAZON_SECRET_ACCESS_KEY=`cat $HOME/.ec2/secret_access_key.txt`
+# Amazon EC2 gems
+ec2setenv () {
+  export EC2_CERT=`ls -1 $HOME/.ec2/cert-*`
+  export EC2_PRIVATE_KEY=`echo $EC2_CERT | sed 's/cert-\(.*\).pem/pk-\1.pem/'`
+
+  # New paradigm for ec2 is to use the custom keypair, but username may change
+  export EC2_ROOT_KEY="$HOME/.ec2/root-$EC2_REGION.pem"
+  if [ ! -f "$EC2_ROOT_KEY" ]; then
+    echo "Warning: EC2 key does not exist: $EC_ROOT_KEY" >&2
+  fi
+
+  ssh_cmd="ssh -i $EC2_ROOT_KEY -o StrictHostKeyChecking=no -l root"
+  alias ash=$ssh_cmd
+  alias async="rsync -av -e '$ssh_cmd'"
+
+  # Amazon Linux
+  ssh_cmd="ssh -i $EC2_ROOT_KEY -o StrictHostKeyChecking=no -l ec2-user"
+  alias esh=$ssh_cmd
+  alias esync="rsync -av -e '$ssh_cmd'"
+
+  # Ubuntu
+  ssh_cmd="ssh -i $EC2_ROOT_KEY -o StrictHostKeyChecking=no -l ubuntu"
+  alias ush=$ssh_cmd
+  alias usync="rsync -av -e '$ssh_cmd'"
+}
+
+if [ -d "$HOME/.ec2" ]; then
+  ec2region us-west-2
 fi
 
-# Sandbox
-alias ash="ssh -i $HOME/.ec2/sandbox-keypair.pem -o StrictHostKeyChecking=no -l ubuntu"
-alias async="rsync -a -e '$HOME/.ec2/sandbox-keypair.pem -o StrictHostKeyChecking=no -l ubuntu'"
+# Use the github aws-tools repo if available
+if [ -f "$HOME/Workspace/aws-tools/aws-tools-env.sh" ]; then
+  export AWS_ACCESS_KEY_ID=`cat $HOME/.ec2/access_key_id.txt`
+  export AWS_SECRET_ACCESS_KEY=`cat $HOME/.ec2/secret_access_key.txt`
+  . "$HOME/Workspace/aws-tools/aws-tools-env.sh"
+fi
 
 if add_path /Library/PostgreSQL/9.0/bin; then
   . /Library/PostgreSQL/9.0/pg_env.sh
@@ -145,3 +172,5 @@ export GOOS=darwin
 export GOARCH=386
 export GOBIN=$HOME/bin
 
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
