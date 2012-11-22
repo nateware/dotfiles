@@ -99,7 +99,7 @@ ec2region () {
     export EC2_URL="http://ec2.$EC2_REGION.amazonaws.com"
     ec2setenv
   fi
-  echo "EC2_REGION=$EC2_REGION"
+  tty -s && echo "EC2_REGION=$EC2_REGION"
 }
 
 # Amazon EC2 gems
@@ -113,32 +113,42 @@ ec2setenv () {
     echo "Warning: EC2 key does not exist: $EC_ROOT_KEY" >&2
   fi
 
+  # To override root, use ubuntu@ or ec2-user@ or whatever
   ssh_cmd="ssh -i $EC2_ROOT_KEY -o StrictHostKeyChecking=no -l root"
   alias ash=$ssh_cmd
   alias async="rsync -av -e '$ssh_cmd'"
-
-  # Amazon Linux
-  ssh_cmd="ssh -i $EC2_ROOT_KEY -o StrictHostKeyChecking=no -l ec2-user"
-  alias esh=$ssh_cmd
-  alias esync="rsync -av -e '$ssh_cmd'"
-
-  # Ubuntu
-  ssh_cmd="ssh -i $EC2_ROOT_KEY -o StrictHostKeyChecking=no -l ubuntu"
-  alias ush=$ssh_cmd
-  alias usync="rsync -av -e '$ssh_cmd'"
 }
 
-if [ -d "$HOME/.ec2" ]; then
-  ec2region us-west-2
-fi
+# Set default EC2 region
+[ -d "$HOME/.ec2" ] && ec2region us-west-2
 
 # Use the github aws-tools repo if available
-if [ -f "$HOME/Workspace/aws-tools/aws-tools-env.sh" ]; then
+if [ -f "$HOME/Workspace/aws-cli-updater/aws-cli-env.sh" ]; then
   export AWS_ACCESS_KEY_ID=`cat $HOME/.ec2/access_key_id.txt`
   export AWS_SECRET_ACCESS_KEY=`cat $HOME/.ec2/secret_access_key.txt`
-  . "$HOME/Workspace/aws-tools/aws-tools-env.sh"
+  . "$HOME/Workspace/aws-cli-updater/aws-cli-env.sh"
 fi
 
+# Easy unzipping
+untar () {
+  if [ "$#" -eq 0 ]; then
+    echo "Usage: untar files ..." >&2
+    return 1
+  fi
+  for f
+  do
+    case $f in
+      *.zip) unzip $f;;
+      *.tar.gz|*.tgz) tar xzvf $f;;
+      *.tar.bz|*.tbz) bunzip -c $f | tar xvf -;;
+      *) echo "Unsupported file type: $f" >&2;;
+    esac
+  done
+}
+
+
+
+# Postgres
 if add_path /Library/PostgreSQL/9.0/bin; then
   . /Library/PostgreSQL/9.0/pg_env.sh
 fi
@@ -172,5 +182,5 @@ export GOOS=darwin
 export GOARCH=386
 export GOBIN=$HOME/bin
 
-
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+
