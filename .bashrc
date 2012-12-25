@@ -76,7 +76,7 @@ export OS=`uname`
 [ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
 
 # For Jeweler
-export JEWELER_OPTS="--bundler --bacon --create-repo --user-name 'Nate Wiger' --user-email 'nate@wiger.org' --github-username nateware --github-token '`cat $HOME/.github-token`'"
+export JEWELER_OPTS="--bundler --bacon --create-repo --user-name 'Nate Wiger' --user-email 'nwiger@gmail.com' --github-username nateware"
 
 # ImageMagick
 add_path_and_lib /usr/local/ImageMagick/bin
@@ -122,12 +122,10 @@ ec2setenv () {
 # Set default EC2 region
 [ -d "$HOME/.ec2" ] && ec2region us-west-2
 
-# Use the github aws-tools repo if available
-if [ -f "$HOME/Workspace/aws-cli-updater/aws-cli-env.sh" ]; then
-  export AWS_ACCESS_KEY_ID=`cat $HOME/.ec2/access_key_id.txt`
-  export AWS_SECRET_ACCESS_KEY=`cat $HOME/.ec2/secret_access_key.txt`
-  . "$HOME/Workspace/aws-cli-updater/aws-cli-env.sh"
-fi
+# Use garnaat's unified CLI
+export AWS_ACCESS_KEY_ID=`cat $HOME/.ec2/access_key_id.txt`
+export AWS_SECRET_ACCESS_KEY=`cat $HOME/.ec2/secret_access_key.txt`
+complete -C aws_completer aws # bash tab completion
 
 # Easy unzipping
 untar () {
