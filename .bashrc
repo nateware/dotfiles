@@ -104,7 +104,7 @@ ec2region () {
 
 # Amazon EC2 gems
 ec2setenv () {
-  export EC2_CERT=`ls -1 $HOME/.ec2/cert-*`
+  export EC2_CERT=`ls -1 $HOME/.ec2/cert-* | head -1`
   export EC2_PRIVATE_KEY=`echo $EC2_CERT | sed 's/cert-\(.*\).pem/pk-\1.pem/'`
 
   # New paradigm for ec2 is to use the custom keypair, but username may change
