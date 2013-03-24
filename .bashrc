@@ -18,10 +18,11 @@ add_path () {
 
 # Add to LD_LIB_PATH adjusting for platform
 add_lib () {
+  [ -d "$1" ] || return 0
   if [ "$OS" = Darwin ]; then
-    export DYLD_LIBRARY_PATH="$lib:$DYLD_LIBRARY_PATH"
+    export DYLD_LIBRARY_PATH="$1:$DYLD_LIBRARY_PATH"
   else
-    export LD_LIBRARY_PATH="$lib:$DYLD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH="$1:$DYLD_LIBRARY_PATH"
   fi
   return 0
 }
@@ -82,7 +83,7 @@ export JEWELER_OPTS="--bundler --bacon --create-repo --user-name 'Nate Wiger' --
 add_path_and_lib /usr/local/ImageMagick/bin
 
 # MySQL
-add_path_and_lib /usr/local/mysql/bin
+add_path /usr/local/mysql/bin
 
 # MongoDB
 add_path /usr/local/mongodb/bin
@@ -168,8 +169,7 @@ alias rjva="ssh -l root $JVA"
 # Still needed for old games
 export ORACLE_HOME="/usr/local/oracle/10.2.0.4/client"
 if [ -d "$ORACLE_HOME" ]; then
-  add_path "$ORACLE_HOME/bin"
-  add_lib  "$ORACLE_HOME/lib"
+  add_path_and_lib "$ORACLE_HOME/bin"
   export TNS_ADMIN="$HOME/tnsadmin"  # Directory
   export NLS_LANG=".AL32UTF8"
 fi
@@ -182,3 +182,6 @@ export GOBIN=$HOME/bin
 
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
