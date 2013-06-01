@@ -72,8 +72,25 @@ wd () {
 export OS=`uname`
 [ "$OS" = Darwin ] && export JAVA_HOME=/Library/Java/Home
 
+# Remember add_path unshifts, so the one you want first should be last
+add_path \
+  /usr/local/git/bin \
+  /usr/local/bin \
+  /opt/local/sbin \
+  /opt/local/bin \
+  $HOME/sbin \
+  $HOME/bin
+
 # For ruby version manager
 [ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
+
+# Load node version manager
+[ -s $HOME/.nvm/nvm.sh ] && . $HOME/.nvm/nvm.sh
+
+# rbenv
+#if add_path $HOME/.rbenv/bin; then
+  #eval "$(rbenv init -)"
+#fi
 
 # For Jeweler
 export JEWELER_OPTS="--bundler --bacon --create-repo --user-name 'Nate Wiger' --user-email 'nwiger@gmail.com' --github-username nateware"
@@ -83,6 +100,9 @@ add_path_and_lib /usr/local/ImageMagick/bin
 
 # MySQL
 add_path_and_lib /usr/local/mysql/bin
+
+# Self-contained Postgres.app
+add_path /Applications/Postgres.app/Contents/MacOS/bin
 
 # MongoDB
 add_path /usr/local/mongodb/bin
@@ -97,20 +117,36 @@ ec2region () {
   if [ $# -eq 1 ]; then
     export EC2_REGION=$1
     export EC2_URL="http://ec2.$EC2_REGION.amazonaws.com"
+    export AWS_DEFAULT_REGION=$EC2_REGION
     ec2setenv
   fi
   tty -s && echo "EC2_REGION=$EC2_REGION"
 }
 
+ec2acct () {
+  if [ $# -ge 1 ]; then
+    export EC2_ACCOUNT=$1
+    if [ $# -eq 2 ]; then
+      ec2region $2
+    else
+      ec2setenv
+    fi
+  fi
+  tty -s && echo "EC2_ACCOUNT=$EC2_ACCOUNT"
+}
+
 # Amazon EC2 gems
 ec2setenv () {
-  export EC2_CERT=`ls -1 $HOME/.ec2/cert-* | head -1`
+  export AWS_ACCESS_KEY_ID=`cat $HOME/.ec2/$EC2_ACCOUNT/access_key_id.txt`
+  export AWS_SECRET_ACCESS_KEY=`cat $HOME/.ec2/$EC2_ACCOUNT/secret_access_key.txt`
+
+  export EC2_CERT=`ls -1 $HOME/.ec2/$EC2_ACCOUNT/cert-* | head -1`
   export EC2_PRIVATE_KEY=`echo $EC2_CERT | sed 's/cert-\(.*\).pem/pk-\1.pem/'`
 
   # New paradigm for ec2 is to use the custom keypair, but username may change
-  export EC2_ROOT_KEY="$HOME/.ec2/root-$EC2_REGION.pem"
+  export EC2_ROOT_KEY="$HOME/.ec2/$EC2_ACCOUNT/root-$EC2_REGION.pem"
   if [ ! -f "$EC2_ROOT_KEY" ]; then
-    echo "Warning: EC2 key does not exist: $EC_ROOT_KEY" >&2
+    echo "Warning: EC2 key does not exist: $EC2_ROOT_KEY" >&2
   fi
 
   # To override root, use ubuntu@ or ec2-user@ or whatever
@@ -120,12 +156,16 @@ ec2setenv () {
 }
 
 # Set default EC2 region
-[ -d "$HOME/.ec2" ] && ec2region us-west-2
+if [ -d "$HOME/.ec2" ]; then
+  ec2acct work us-west-2
+fi
 
 # Use garnaat's unified CLI
-export AWS_ACCESS_KEY_ID=`cat $HOME/.ec2/access_key_id.txt`
-export AWS_SECRET_ACCESS_KEY=`cat $HOME/.ec2/secret_access_key.txt`
 complete -C aws_completer aws # bash tab completion
+paws (){
+  aws "$@" | ruby -rjson -rawesome_print -e "ap JSON.parse(STDIN.read)"
+}
+complete -C aws_completer paws # bash tab completion
 
 # Easy unzipping
 untar () {
@@ -144,22 +184,24 @@ untar () {
   done
 }
 
-
+# shortcut to kill processes that tend to suck
+fuck () {
+  local pn=
+  case "$1" in
+  chr*)  pn="Google Chrome";;
+  cisc*) pn="Cisco AnyConnect Secure Mobility Client";;
+  esac
+  killall $pn
+  sleep 2
+  killall $pn
+  sleep 3
+  killall -9 $pn
+}
 
 # Postgres
 if add_path /Library/PostgreSQL/9.0/bin; then
   . /Library/PostgreSQL/9.0/pg_env.sh
 fi
-
-# Remember add_path prefixes, so the one you want first should be last
-add_path \
-  /usr/local/pgsql/bin \
-  /usr/local/git/bin \
-  /usr/local/bin \
-  /opt/local/sbin \
-  /opt/local/bin \
-  $HOME/sbin \
-  $HOME/bin
 
 export JVA=209.40.197.81
 alias jva="ssh -l janetvanarsdale $JVA"
@@ -180,5 +222,4 @@ export GOOS=darwin
 export GOARCH=386
 export GOBIN=$HOME/bin
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 

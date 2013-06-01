@@ -35,3 +35,6 @@ printf $c_normal
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
+
+# MacPorts Installer addition
+export PATH=/opt/local/bin:/opt/local/sbin:$PATH

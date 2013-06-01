@@ -19,3 +19,5 @@
   branch = auto
 [push]
   default = simple
+[core]
+	excludesfile = /Users/nateware/.gitignore_global
