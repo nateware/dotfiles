@@ -12,12 +12,14 @@
   hard = reset --hard origin/master
   hist = log --since=1.day --relative-date --stat
   mine = log --since=1.day --relative-date --stat --committer=nateware
+	undo = reset HEAD --
+	last = log -1 HEAD
   #pu = !"git fetch origin -v; git fetch upstream -v; git merge upstream/master"
 [color]
   diff = auto
   status = auto
   branch = auto
 [push]
-  default = simple
+	default = current
 [core]
 	excludesfile = /Users/nateware/.gitignore_global

@@ -82,6 +82,8 @@ add_path \
   $HOME/sbin \
   $HOME/bin
 
+add_path $HOME/Workspace/adt-bundle-mac-x86_64-20130522/sdk/platform-tools
+
 # For ruby version manager
 [ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
 
@@ -138,14 +140,21 @@ ec2acct () {
 
 # Amazon EC2 gems
 ec2setenv () {
-  export AWS_ACCESS_KEY_ID=`cat $HOME/.ec2/$EC2_ACCOUNT/access_key_id.txt`
-  export AWS_SECRET_ACCESS_KEY=`cat $HOME/.ec2/$EC2_ACCOUNT/secret_access_key.txt`
+  local acctdir="$HOME/.ec2/$EC2_ACCOUNT"
 
-  export EC2_CERT=`ls -1 $HOME/.ec2/$EC2_ACCOUNT/cert-* | head -1`
+  # Newer tools and unified CLI
+  export AWS_ACCESS_KEY_ID=`cat $acctdir/access_key_id.txt 2>/dev/null`
+  export AWS_SECRET_ACCESS_KEY=`cat $acctdir/secret_access_key.txt 2>/dev/null`
+
+  export EC2_CERT=`ls -1 $acctdir/cert-* 2>/dev/null | head -1`
   export EC2_PRIVATE_KEY=`echo $EC2_CERT | sed 's/cert-\(.*\).pem/pk-\1.pem/'`
 
-  # New paradigm for ec2 is to use the custom keypair, but username may change
-  export EC2_ROOT_KEY="$HOME/.ec2/$EC2_ACCOUNT/root-$EC2_REGION.pem"
+  # Old style per-service CLI's
+  export AWS_CREDENTIAL_FILE="$acctdir/credential-file-path"
+
+  # My approach for ec2 is to launch with the custom "root" keypair,
+  # but username may change based on AMI, so use just do ec2-user@whatevs
+  export EC2_ROOT_KEY="$acctdir/root-$EC2_REGION.pem"
   if [ ! -f "$EC2_ROOT_KEY" ]; then
     echo "Warning: EC2 key does not exist: $EC2_ROOT_KEY" >&2
   fi
@@ -167,6 +176,8 @@ paws (){
   aws "$@" | ruby -rjson -rawesome_print -e "ap JSON.parse(STDIN.read)"
 }
 complete -C aws_completer paws # bash tab completion
+
+[ -f "$HOME/.git-completion.bash" ] && . "$HOME/.git-completion.bash"
 
 # Easy unzipping
 untar () {
@@ -192,11 +203,11 @@ fuck () {
   chr*)  pn="Google Chrome";;
   cisc*) pn="Cisco AnyConnect Secure Mobility Client";;
   esac
-  killall $pn
+  killall "$pn"
   sleep 2
-  killall $pn
+  killall "$pn"
   sleep 3
-  killall -9 $pn
+  killall -9 "$pn"
 }
 
 # Postgres
