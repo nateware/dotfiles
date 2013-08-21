@@ -189,8 +189,9 @@ untar () {
   do
     case $f in
       *.zip) unzip $f;;
-      *.tar.gz|*.tgz) tar xzvf $f;;
-      *.tar.bz|*.tbz) bunzip -c $f | tar xvf -;;
+      *.tar.gz|*.tgz)   tar xzvf $f;;
+      *.tar.bz|*.tbz)   bunzip -c $f | tar xvf -;;
+      *.tar.bz2|*.tbz2) bunzip2 -c $f | tar xvf -;;
       *) echo "Unsupported file type: $f" >&2;;
     esac
   done
