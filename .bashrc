@@ -47,8 +47,8 @@ alias vi='vim -b'
 
 # Don't want to install rubydocs - TOO SLOW!
 alias gi='gem install --no-ri --no-rdoc'
-alias bi='bundle --without=production install'
-alias bu='bundle --without=production update'
+alias bi='bundle install --without=production'
+alias bu='bundle update'
 alias be='bundle exec'
 alias ga='git ci -a -m'
 alias gd='git pu && git push -f dev'
@@ -82,18 +82,8 @@ add_path \
   $HOME/sbin \
   $HOME/bin
 
+# Android tools
 add_path $HOME/Workspace/adt-bundle-mac-x86_64-20130522/sdk/platform-tools
-
-# For ruby version manager
-[ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
-
-# Load node version manager
-[ -s $HOME/.nvm/nvm.sh ] && . $HOME/.nvm/nvm.sh
-
-# rbenv
-#if add_path $HOME/.rbenv/bin; then
-  #eval "$(rbenv init -)"
-#fi
 
 # For Jeweler
 export JEWELER_OPTS="--bundler --bacon --create-repo --user-name 'Nate Wiger' --user-email 'nwiger@gmail.com' --github-username nateware"
@@ -141,6 +131,10 @@ ec2acct () {
 # Amazon EC2 gems
 ec2setenv () {
   local acctdir="$HOME/.ec2/$EC2_ACCOUNT"
+  if [ ! -d $acctdir ]; then
+    echo "Error: No such dir $acctdir" >&2
+    return 1
+  fi
 
   # Newer tools and unified CLI
   export AWS_ACCESS_KEY_ID=`cat $acctdir/access_key_id.txt 2>/dev/null`
@@ -220,6 +214,10 @@ export JVA=209.40.197.81
 alias jva="ssh -l janetvanarsdale $JVA"
 alias rjva="ssh -l root $JVA"
 
+# Workaround for ruby 2.0.0 rubygems issue
+alias chef-solo='unset GEM_HOME GEM_PATH && \chef-solo'
+alias knife='unset GEM_HOME GEM_PATH && \knife'
+
 # Still needed for old games
 export ORACLE_HOME="/usr/local/oracle/10.2.0.4/client"
 if [ -d "$ORACLE_HOME" ]; then
@@ -234,7 +232,11 @@ export GOOS=darwin
 export GOARCH=386
 export GOBIN=$HOME/bin
 
-
-
 ### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
+add_path /usr/local/heroku/bin
+
+# For ruby version manager
+[ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
+
+# Load node version manager
+[ -s $HOME/.nvm/nvm.sh ] && . $HOME/.nvm/nvm.sh
