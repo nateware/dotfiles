@@ -85,14 +85,23 @@ add_path \
 # Android tools
 add_path $HOME/Workspace/adt-bundle-mac-x86_64-20130522/sdk/platform-tools
 
-# For Jeweler
-export JEWELER_OPTS="--bundler --bacon --create-repo --user-name 'Nate Wiger' --user-email 'nwiger@gmail.com' --github-username nateware"
+# Ruby version manager
+[ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
+
+# Node version manager
+[ -s $HOME/.nvm/nvm.sh ] && . $HOME/.nvm/nvm.sh
+[ -f $NVM_DIR/bash_completion ] && . $NVM_DIR/bash_completion
+
+# rbenv
+#if add_path $HOME/.rbenv/bin; then
+  #eval "$(rbenv init -)"
+#fi
 
 # ImageMagick
 add_path_and_lib /usr/local/ImageMagick/bin
 
 # MySQL
-add_path /usr/local/mysql/bin
+add_path_and_lib /usr/local/mysql/bin
 
 # Self-contained Postgres.app
 add_path /Applications/Postgres.app/Contents/MacOS/bin
@@ -235,8 +244,3 @@ export GOBIN=$HOME/bin
 ### Added by the Heroku Toolbelt
 add_path /usr/local/heroku/bin
 
-# For ruby version manager
-[ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
-
-# Load node version manager
-[ -s $HOME/.nvm/nvm.sh ] && . $HOME/.nvm/nvm.sh
