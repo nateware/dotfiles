@@ -1,8 +1,13 @@
-#!/bin/sh
+#!/usr/bin/env ruby
 
-for f in $PWD/.[a-z]*
-do
-  b=`basename $f`
-  echo "$HOME/$b => $f"
-  (cd $HOME && rm -f $b && ln -s $f)
-done
+# use ruby to get relative paths
+require 'pathname'
+
+Dir['.[a-z]*'].each do |file|
+  path = Pathname.new(Dir.pwd + '/' + file)
+  home = Pathname.new(ENV['HOME'])
+  rel  = path.relative_path_from home
+  link = ENV['HOME'] + '/' + file
+  puts "#{link} -> #{rel}"
+  system "rm -f #{link} && ln -s #{rel} #{link}"
+end
