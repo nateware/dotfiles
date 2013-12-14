@@ -65,7 +65,11 @@ gapd () {
 wd () {
   if [ $# -eq 0 ]; then
     pushd "$HOME/Workspace"
+  elif [ -d "$1" ]; then
+    # tab expansion
+    pushd "$1"
   else
+    # wildcard
     pushd "$HOME/Workspace/$1"*
   fi
 }
