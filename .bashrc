@@ -47,12 +47,13 @@ alias vi='vim -b'
 
 # Don't want to install rubydocs - TOO SLOW!
 alias gi='gem install --no-ri --no-rdoc'
-alias bi='bundle install --without=production'
+alias bi='bundle install --without=production:staging:assets'
 alias bu='bundle update'
 alias be='bundle exec'
 alias ga='git ci -a -m'
 alias gd='git pu && git push -f dev'
 alias gp='git pu'
+
 gap () {
   ga "$*" && gp
 }
@@ -117,60 +118,65 @@ add_path "$RDS_HOME/bin" || unset RDS_HOME
 
 ec2region () {
   if [ $# -eq 1 ]; then
-    export EC2_REGION=$1
+    local reg=$1
+    if [ "$reg" = default ]; then
+      reg=`cat $EC2_ACCOUNT_DIR/default_region.txt`
+      if [ $? -ne 0 ]; then
+        echo "Warning: Defaulting to us-west-2 AWS region" >&2
+        reg="us-west-2"
+      fi
+    fi
+
+    export EC2_REGION=$reg
     export EC2_URL="http://ec2.$EC2_REGION.amazonaws.com"
     export AWS_DEFAULT_REGION=$EC2_REGION
-    ec2setenv
+
+    # My approach for ec2 is to launch with the custom "root" keypair,
+    # but username may change based on AMI, so use just do ec2-user@whatevs
+    export EC2_ROOT_KEY="$EC2_ACCOUNT_DIR/root-$EC2_REGION.pem"
+    if [ ! -f "$EC2_ROOT_KEY" ]; then
+      echo "Warning: EC2 key does not exist: $EC2_ROOT_KEY" >&2
+    fi
+
+    # To override root, use ubuntu@ or ec2-user@ or whatever
+    ssh_cmd="ssh -i $EC2_ROOT_KEY -o StrictHostKeyChecking=no -l root"
+    alias ash=$ssh_cmd
+    alias async="rsync -av -e '$ssh_cmd'"
   fi
+
   tty -s && echo "EC2_REGION=$EC2_REGION"
 }
 
 ec2acct () {
-  if [ $# -ge 1 ]; then
-    export EC2_ACCOUNT=$1
-    if [ $# -eq 2 ]; then
-      ec2region $2
-    else
-      ec2setenv
+  if [ $# -eq 1 ]; then
+    local acctdir="$HOME/.ec2/$1"
+    if [ ! -d $acctdir ]; then
+      echo "Error: No such dir $acctdir" >&2
+      return 1
     fi
+
+    export EC2_ACCOUNT=$1
+    export EC2_ACCOUNT_DIR=$acctdir
+
+    # Newer tools and unified CLI
+    export AWS_ACCESS_KEY_ID=`cat $EC2_ACCOUNT_DIR/access_key_id.txt 2>/dev/null`
+    export AWS_SECRET_ACCESS_KEY=`cat $EC2_ACCOUNT_DIR/secret_access_key.txt 2>/dev/null`
+
+    export EC2_CERT=`ls -1 $EC2_ACCOUNT_DIR/cert-* 2>/dev/null | head -1`
+    export EC2_PRIVATE_KEY=`echo $EC2_CERT | sed 's/cert-\(.*\).pem/pk-\1.pem/'`
+
+    # Old style per-service CLI's
+    export AWS_CREDENTIAL_FILE="$EC2_ACCOUNT_DIR/credential-file-path"
   fi
+
   tty -s && echo "EC2_ACCOUNT=$EC2_ACCOUNT"
 }
 
-# Amazon EC2 gems
-ec2setenv () {
-  local acctdir="$HOME/.ec2/$EC2_ACCOUNT"
-  if [ ! -d $acctdir ]; then
-    echo "Error: No such dir $acctdir" >&2
-    return 1
-  fi
-
-  # Newer tools and unified CLI
-  export AWS_ACCESS_KEY_ID=`cat $acctdir/access_key_id.txt 2>/dev/null`
-  export AWS_SECRET_ACCESS_KEY=`cat $acctdir/secret_access_key.txt 2>/dev/null`
-
-  export EC2_CERT=`ls -1 $acctdir/cert-* 2>/dev/null | head -1`
-  export EC2_PRIVATE_KEY=`echo $EC2_CERT | sed 's/cert-\(.*\).pem/pk-\1.pem/'`
-
-  # Old style per-service CLI's
-  export AWS_CREDENTIAL_FILE="$acctdir/credential-file-path"
-
-  # My approach for ec2 is to launch with the custom "root" keypair,
-  # but username may change based on AMI, so use just do ec2-user@whatevs
-  export EC2_ROOT_KEY="$acctdir/root-$EC2_REGION.pem"
-  if [ ! -f "$EC2_ROOT_KEY" ]; then
-    echo "Warning: EC2 key does not exist: $EC2_ROOT_KEY" >&2
-  fi
-
-  # To override root, use ubuntu@ or ec2-user@ or whatever
-  ssh_cmd="ssh -i $EC2_ROOT_KEY -o StrictHostKeyChecking=no -l root"
-  alias ash=$ssh_cmd
-  alias async="rsync -av -e '$ssh_cmd'"
-}
-
 # Set default EC2 region
-if [ -d "$HOME/.ec2" ]; then
-  ec2acct work us-west-2
+if [ -d "$HOME/.ec2/default" ]; then
+  what=`readlink $HOME/.ec2/default`
+  ec2acct $what
+  ec2region default
 fi
 
 # Use garnaat's unified CLI
