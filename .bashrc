@@ -124,7 +124,7 @@ ec2region () {
   if [ $# -eq 1 ]; then
     local reg=$1
     if [ "$reg" = default ]; then
-      reg=`cat $EC2_ACCOUNT_DIR/default_region.txt`
+      reg=$(<$EC2_ACCOUNT_DIR/default_region.txt)
       if [ $? -ne 0 ]; then
         echo "Warning: Defaulting to us-west-2 AWS region" >&2
         reg="us-west-2"
@@ -148,7 +148,7 @@ ec2region () {
     alias async="rsync -av -e '$ssh_cmd'"
   fi
 
-  tty -s && echo "EC2_REGION=$EC2_REGION"
+  [ -t 0 ] && echo "EC2_REGION=$EC2_REGION"
 }
 
 ec2acct () {
@@ -163,22 +163,19 @@ ec2acct () {
     export EC2_ACCOUNT_DIR=$acctdir
 
     # Newer tools and unified CLI
-    export AWS_ACCESS_KEY_ID=`cat $EC2_ACCOUNT_DIR/access_key_id.txt 2>/dev/null`
-    export AWS_SECRET_ACCESS_KEY=`cat $EC2_ACCOUNT_DIR/secret_access_key.txt 2>/dev/null`
-
-    export EC2_CERT=`ls -1 $EC2_ACCOUNT_DIR/cert-* 2>/dev/null | head -1`
-    export EC2_PRIVATE_KEY=`echo $EC2_CERT | sed 's/cert-\(.*\).pem/pk-\1.pem/'`
+    export AWS_ACCESS_KEY_ID=$(<$EC2_ACCOUNT_DIR/access_key_id.txt)
+    export AWS_SECRET_ACCESS_KEY=$(<$EC2_ACCOUNT_DIR/secret_access_key.txt)
 
     # Old style per-service CLI's
     export AWS_CREDENTIAL_FILE="$EC2_ACCOUNT_DIR/credential-file-path"
   fi
 
-  tty -s && echo "EC2_ACCOUNT=$EC2_ACCOUNT"
+  [ -t 0 ] && echo "EC2_ACCOUNT=$EC2_ACCOUNT"
 }
 
 # Set default EC2 region
 if [ -d "$HOME/.ec2/default" ]; then
-  what=`readlink $HOME/.ec2/default`
+  what=$(readlink $HOME/.ec2/default)
   ec2acct $what
   ec2region default
 fi
@@ -238,18 +235,20 @@ alias chef-solo='unset GEM_HOME GEM_PATH && \chef-solo'
 alias knife='unset GEM_HOME GEM_PATH && \knife'
 
 # Still needed for old games
-export ORACLE_HOME="/usr/local/oracle/10.2.0.4/client"
-if [ -d "$ORACLE_HOME" ]; then
+if [ -d "/usr/local/oracle/10.2.0.4/client" ]; then
   add_path_and_lib "$ORACLE_HOME/bin"
+  export ORACLE_HOME="/usr/local/oracle/10.2.0.4/client"
   export TNS_ADMIN="$HOME/tnsadmin"  # Directory
   export NLS_LANG=".AL32UTF8"
 fi
 
 # For fucking with "go" the language
-export GOROOT=$HOME/Workspace/go
-export GOOS=darwin
-export GOARCH=386
-export GOBIN=$HOME/bin
+if [ -d $HOME/Workspace/go ]; then
+  export GOROOT=$HOME/Workspace/go
+  export GOOS=darwin
+  export GOARCH=386
+  export GOBIN=$HOME/bin
+fi
 
 ### Added by the Heroku Toolbelt
 add_path /usr/local/heroku/bin
