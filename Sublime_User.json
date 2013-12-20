@@ -1,0 +1,11 @@
+{
+  "color_scheme": "Packages/Color Scheme - Default/Sunburst.tmTheme",
+  "ignored_packages":
+  [
+  ],
+  "vintage_start_in_command_mode": true,
+  "auto_indent": true,
+  "detect_indentation": false,
+  "tab_size": 2,
+  "translate_tabs_to_spaces": true
+}
