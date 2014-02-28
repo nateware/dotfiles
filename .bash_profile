@@ -46,9 +46,9 @@ C_UNDERLINE=$(tput smul)
 # http://askubuntu.com/questions/111840/ps1-problem-messing-up-cli
 export PS1='[\[$C_BLUE\]\W\[$C_NORMAL\]]\[$C_GREEN\]\$\[$C_NORMAL\] '
 
-printf $C_RED
-type ruby
-printf $C_NORMAL
+#printf $C_RED
+#type ruby
+#printf $C_NORMAL
 
 # Only sublime on login; vi otherwise
 export EDITOR='subl -w'

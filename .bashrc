@@ -98,9 +98,9 @@ add_path $HOME/Workspace/adt-bundle-mac-x86_64-20130522/sdk/platform-tools
 [ -f $NVM_DIR/bash_completion ] && . $NVM_DIR/bash_completion
 
 # rbenv
-#if add_path $HOME/.rbenv/bin; then
-  #eval "$(rbenv init -)"
-#fi
+if which rbenv >/dev/null; then
+  eval "$(rbenv init -)"
+fi
 
 # ImageMagick
 add_path_and_lib /usr/local/ImageMagick/bin
