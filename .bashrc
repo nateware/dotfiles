@@ -98,7 +98,7 @@ add_path $HOME/Workspace/adt-bundle-mac-x86_64-20130522/sdk/platform-tools
 [ -f $NVM_DIR/bash_completion ] && . $NVM_DIR/bash_completion
 
 # rbenv
-if which rbenv >/dev/null; then
+if type rbenv >/dev/null; then
   eval "$(rbenv init -)"
 fi
 
@@ -253,3 +253,10 @@ fi
 ### Added by the Heroku Toolbelt
 add_path /usr/local/heroku/bin
 
+# The next line updates PATH for the Google Cloud SDK.
+. /Users/nateware/Workspace/google-cloud-sdk/path.bash.inc
+
+# The next line enables bash completion for gcloud.
+. /Users/nateware/Workspace/google-cloud-sdk/completion.bash.inc
+
+alias gsh="ssh -i $HOME/.ssh/google_compute_engine -o StrictHostKeyChecking=no"

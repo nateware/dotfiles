@@ -53,5 +53,4 @@ export PS1='[\[$C_BLUE\]\W\[$C_NORMAL\]]\[$C_GREEN\]\$\[$C_NORMAL\] '
 # Only sublime on login; vi otherwise
 export EDITOR='subl -w'
 
-
 [ -s $HOME/.nvm/nvm.sh ] && . $HOME/.nvm/nvm.sh # This loads NVM
