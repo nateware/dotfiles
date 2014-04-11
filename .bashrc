@@ -114,70 +114,68 @@ add_path /Applications/Postgres.app/Contents/MacOS/bin
 # MongoDB
 add_path /usr/local/mongodb/bin
 
-# Amazon EC2 CLI tools (official locations)
-export EC2_HOME=/usr/local/ec2-api-tools
-add_path "$EC2_HOME/bin" || unset EC2_HOME
-export RDS_HOME=/usr/local/rds-cli
-add_path "$RDS_HOME/bin" || unset RDS_HOME
-
-ec2region () {
+awsregion () {
   if [ $# -eq 1 ]; then
-    local reg=$1
-    if [ "$reg" = default ]; then
-      reg=$(<$EC2_ACCOUNT_DIR/default_region.txt)
-      if [ $? -ne 0 ]; then
-        echo "Warning: Defaulting to us-west-2 AWS region" >&2
-        reg="us-west-2"
-      fi
-    fi
-
-    export EC2_REGION=$reg
-    export EC2_URL="http://ec2.$EC2_REGION.amazonaws.com"
-    export AWS_DEFAULT_REGION=$EC2_REGION
-
-    # My approach for ec2 is to launch with the custom "root" keypair,
-    # but username may change based on AMI, so use just do ec2-user@whatevs
-    export EC2_ROOT_KEY="$EC2_ACCOUNT_DIR/root-$EC2_REGION.pem"
-    if [ ! -f "$EC2_ROOT_KEY" ]; then
-      echo "Warning: EC2 key does not exist: $EC2_ROOT_KEY" >&2
-    fi
-
-    # To override root, use ubuntu@ or ec2-user@ or whatever
-    ssh_cmd="ssh -i $EC2_ROOT_KEY -o StrictHostKeyChecking=no -l root"
-    alias ash=$ssh_cmd
-    alias async="rsync -av -e '$ssh_cmd'"
+    export AWS_DEFAULT_REGION=$1
+    ec2keypair # reset keys when switch regions
   fi
 
-  [ -t 0 ] && echo "EC2_REGION=$EC2_REGION"
+  [ -t 0 ] && echo "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
 }
 
-ec2acct () {
+ec2keypair () {
+  # My approach for ec2 is to launch instances with a custom "root" keypair,
+  # but the username may change based on AMI, so then just ssh ec2-user@whatevs
+  local user="${1:-root}"
+
+  if [ -z "$AWS_ACCOUNT" -o -z "$AWS_DEFAULT_REGION" ]; then
+    echo "Error: Set awsacct and awsregion before ec2keypair" >&2
+    return 1
+  fi
+  local acctdir=$(awsacctdir $AWS_ACCOUNT)
+
+  export EC2_ROOT_KEY="$acctdir/$user-$AWS_DEFAULT_REGION.pem"
+  if [ ! -f "$EC2_ROOT_KEY" ]; then
+    echo "Warning: EC2 key does not exist: $EC2_ROOT_KEY" >&2
+  fi
+
+  # To override root, use ubuntu@ or ec2-user@ or whatever
+  local ssh_cmd="ssh -i $EC2_ROOT_KEY -o StrictHostKeyChecking=no -l root"
+  alias ash=$ssh_cmd
+  alias async="rsync -av -e '$ssh_cmd'"
+}
+
+awsacctdir () {
+  echo "$HOME/.awsacct/$1"
+}
+
+awsacct () {
   if [ $# -eq 1 ]; then
-    local acctdir="$HOME/.ec2/$1"
+    local acct="$1"
+    local acctdir=$(awsacctdir $acct)
     if [ ! -d $acctdir ]; then
       echo "Error: No such dir $acctdir" >&2
+      unset AWS_ACCOUNT AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION
       return 1
     fi
 
-    export EC2_ACCOUNT=$1
-    export EC2_ACCOUNT_DIR=$acctdir
+    export AWS_ACCOUNT=$acct
 
     # Newer tools and unified CLI
-    export AWS_ACCESS_KEY_ID=$(<$EC2_ACCOUNT_DIR/access_key_id.txt)
-    export AWS_SECRET_ACCESS_KEY=$(<$EC2_ACCOUNT_DIR/secret_access_key.txt)
+    . $acctdir/access_keys.txt
+    export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION
 
-    # Old style per-service CLI's
-    export AWS_CREDENTIAL_FILE="$EC2_ACCOUNT_DIR/credential-file-path"
+    ec2keypair # reset keys when switch accounts
   fi
 
-  [ -t 0 ] && echo "EC2_ACCOUNT=$EC2_ACCOUNT"
+  [ -t 0 ] && echo "AWS_ACCOUNT=$AWS_ACCOUNT"
 }
 
 # Set default EC2 region
-if [ -d "$HOME/.ec2/default" ]; then
-  what=$(readlink $HOME/.ec2/default)
-  ec2acct $what
-  ec2region default
+export AWS_DEFAULT_REGION="us-west-2"
+if [ -d "$HOME/.awsacct/default" ]; then
+  what=$(readlink $HOME/.awsacct/default)
+  awsacct $what
 fi
 
 # Use garnaat's unified CLI
