@@ -114,41 +114,7 @@ add_path /Applications/Postgres.app/Contents/MacOS/bin
 # MongoDB
 add_path /usr/local/mongodb/bin
 
-awsregion () {
-  if [ $# -eq 1 ]; then
-    export AWS_DEFAULT_REGION=$1
-    ec2keypair # reset keys when switch regions
-  fi
-
-  [ -t 0 ] && echo "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
-}
-
-ec2keypair () {
-  # My approach for ec2 is to launch instances with a custom "root" keypair,
-  # but the username may change based on AMI, so then just ssh ec2-user@whatevs
-  local user="${1:-root}"
-
-  if [ -z "$AWS_ACCOUNT" -o -z "$AWS_DEFAULT_REGION" ]; then
-    echo "Error: Set awsacct and awsregion before ec2keypair" >&2
-    return 1
-  fi
-  local acctdir=$(awsacctdir $AWS_ACCOUNT)
-
-  export EC2_ROOT_KEY="$acctdir/$user-$AWS_DEFAULT_REGION.pem"
-  if [ ! -f "$EC2_ROOT_KEY" ]; then
-    echo "Warning: EC2 key does not exist: $EC2_ROOT_KEY" >&2
-  fi
-
-  # To override root, use ubuntu@ or ec2-user@ or whatever
-  local ssh_cmd="ssh -i $EC2_ROOT_KEY -o StrictHostKeyChecking=no -l root"
-  alias ash=$ssh_cmd
-  alias async="rsync -av -e '$ssh_cmd'"
-}
-
-awsacctdir () {
-  echo "$HOME/.awsacct/$1"
-}
-
+# Switch between AWS account credentials
 awsacct () {
   if [ $# -eq 1 ]; then
     local acct="$1"
@@ -171,7 +137,44 @@ awsacct () {
   [ -t 0 ] && echo "AWS_ACCOUNT=$AWS_ACCOUNT"
 }
 
-# Set default EC2 region
+# Switch AWS regions
+awsregion () {
+  if [ $# -eq 1 ]; then
+    export AWS_DEFAULT_REGION=$1
+    ec2keypair # reset keys when switch regions
+  fi
+
+  [ -t 0 ] && echo "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
+}
+
+awsacctdir () {
+  echo "$HOME/.awsacct/$1"
+}
+
+# My approach for ec2 is to launch instances with a custom "root" keypair,
+# but the username may change based on AMI, so then just ssh ec2-user@whatevs
+# Remember keypairs are mapped to IAM user + region so use both pieces.
+ec2keypair () {
+  local user="${1:-root}"
+
+  if [ -z "$AWS_ACCOUNT" -o -z "$AWS_DEFAULT_REGION" ]; then
+    echo "Error: Set awsacct and awsregion before ec2keypair" >&2
+    return 1
+  fi
+  local acctdir=$(awsacctdir $AWS_ACCOUNT)
+
+  export EC2_ROOT_KEY="$acctdir/$user-$AWS_DEFAULT_REGION.pem"
+  if [ ! -f "$EC2_ROOT_KEY" ]; then
+    echo "Warning: EC2 key does not exist: $EC2_ROOT_KEY" >&2
+  fi
+
+  # To override root, use ubuntu@ or ec2-user@ or whatever
+  local ssh_cmd="ssh -i $EC2_ROOT_KEY -o StrictHostKeyChecking=no -l root"
+  alias ash=$ssh_cmd
+  alias async="rsync -av -e '$ssh_cmd'"
+}
+
+# Set default AWS region and account
 export AWS_DEFAULT_REGION="us-west-2"
 if [ -d "$HOME/.awsacct/default" ]; then
   what=$(readlink $HOME/.awsacct/default)
@@ -252,9 +255,9 @@ fi
 add_path /usr/local/heroku/bin
 
 # The next line updates PATH for the Google Cloud SDK.
-. /Users/nateware/Workspace/google-cloud-sdk/path.bash.inc
+. $HOME/Workspace/google-cloud-sdk/path.bash.inc
 
 # The next line enables bash completion for gcloud.
-. /Users/nateware/Workspace/google-cloud-sdk/completion.bash.inc
+. $HOME/Workspace/google-cloud-sdk/completion.bash.inc
 
 alias gsh="ssh -i $HOME/.ssh/google_compute_engine -o StrictHostKeyChecking=no"
