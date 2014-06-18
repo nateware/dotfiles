@@ -254,10 +254,14 @@ fi
 ### Added by the Heroku Toolbelt
 add_path /usr/local/heroku/bin
 
-# The next line updates PATH for the Google Cloud SDK.
-. $HOME/Workspace/google-cloud-sdk/path.bash.inc
+# GCE
+if [ -d $HOME/Workspace/google-cloud-sdk ]; then
+  # The next line updates PATH for the Google Cloud SDK.
+  . $HOME/Workspace/google-cloud-sdk/path.bash.inc
 
-# The next line enables bash completion for gcloud.
-. $HOME/Workspace/google-cloud-sdk/completion.bash.inc
+  # The next line enables bash completion for gcloud.
+  . $HOME/Workspace/google-cloud-sdk/completion.bash.inc
 
-alias gsh="ssh -i $HOME/.ssh/google_compute_engine -o StrictHostKeyChecking=no"
+  alias gsh="ssh -i $HOME/.ssh/google_compute_engine -o StrictHostKeyChecking=no"
+fi
+
