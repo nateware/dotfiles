@@ -10,7 +10,6 @@
 "
 set nocp
 set tabstop=2 shiftwidth=2 expandtab
-call pathogen#infect()
 syntax on
 filetype plugin indent on
 colorscheme slate
