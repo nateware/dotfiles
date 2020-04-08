@@ -4,6 +4,7 @@
 require 'pathname'
 
 Dir['.[a-z]*'].each do |file|
+  next if file == '.git'
   path = Pathname.new(Dir.pwd + '/' + file)
   home = Pathname.new(ENV['HOME'])
   rel  = path.relative_path_from home
