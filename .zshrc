@@ -65,6 +65,14 @@ alias ga='git ci -a -m'
 alias gd='git pu && git push -f dev'
 alias gp='git pu'
 
+# Platform goodness
+export OS=`uname`
+[ "$OS" = Darwin ] && export JAVA_HOME=/Library/Java/Home
+
+# Ruby version manager
+[ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
+
+# Node version manager
 [ -s $HOME/.nvm/nvm.sh ] && . $HOME/.nvm/nvm.sh # This loads NVM
 
 export EDITOR='vim'
