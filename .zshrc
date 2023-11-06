@@ -78,3 +78,4 @@ export OS=`uname`
 export EDITOR='vim'
 export PS1=$'\033[36m%n\033[m@\033[32m%m:\033[33;1m%~\033[m\$ '
 
+add_path $HOME/Library/Python/3.9/bin
