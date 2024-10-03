@@ -98,7 +98,7 @@ add_path $HOME/Workspace/adt-bundle-mac-x86_64-20130522/sdk/platform-tools
 [ -f $NVM_DIR/bash_completion ] && . $NVM_DIR/bash_completion
 
 # rbenv
-if type rbenv >/dev/null; then
+if type rbenv >/dev/null 2>&1; then
   eval "$(rbenv init -)"
 fi
 
@@ -121,7 +121,7 @@ awsacct () {
     local acctdir=$(awsacctdir $acct)
     if [ ! -d $acctdir ]; then
       echo "Error: No such dir $acctdir" >&2
-      unset AWS_ACCOUNT AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION
+      unset AWS_ACCOUNT AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION AWS_REGION
       return 1
     fi
 
@@ -134,7 +134,7 @@ awsacct () {
     ec2keypair # reset keys when switch accounts
   fi
 
-  [ -t 0 ] && echo "AWS_ACCOUNT=$AWS_ACCOUNT"
+  [ -t 0 ] && env "AWS_ACCOUNT=$AWS_ACCOUNT" | grep '^AWS'
 }
 
 # Switch AWS regions
