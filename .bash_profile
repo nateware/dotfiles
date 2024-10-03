@@ -50,7 +50,7 @@ export PS1='[\[$C_BLUE\]\W\[$C_NORMAL\]]\[$C_GREEN\]\$\[$C_NORMAL\] '
 #type ruby
 #printf $C_NORMAL
 
-# Only sublime on login; vi otherwise
+# Only vim on login; vi otherwise
 export EDITOR='vim'
 
 [ -s $HOME/.nvm/nvm.sh ] && . $HOME/.nvm/nvm.sh # This loads NVM

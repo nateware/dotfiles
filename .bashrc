@@ -157,13 +157,13 @@ awsacctdir () {
 ec2keypair () {
   local user="${1:-root}"
 
-  if [ -z "$AWS_ACCOUNT" -o -z "$AWS_DEFAULT_REGION" ]; then
+  if [ -z "$AWS_ACCOUNT" -o -z "$AWS_REGION" ]; then
     echo "Error: Set awsacct and awsregion before ec2keypair" >&2
     return 1
   fi
   local acctdir=$(awsacctdir $AWS_ACCOUNT)
 
-  export EC2_ROOT_KEY="$acctdir/$user-$AWS_DEFAULT_REGION.pem"
+  export EC2_ROOT_KEY="$acctdir/$user-$AWS_REGION.pem"
   if [ ! -f "$EC2_ROOT_KEY" ]; then
     echo "Warning: EC2 key does not exist: $EC2_ROOT_KEY" >&2
   fi
@@ -265,3 +265,4 @@ if [ -d $HOME/Workspace/google-cloud-sdk ]; then
   alias gsh="ssh -i $HOME/.ssh/google_compute_engine -o StrictHostKeyChecking=no"
 fi
 
+add_path $HOME/Library/Python/3.9/bin
