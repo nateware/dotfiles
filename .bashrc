@@ -129,7 +129,7 @@ awsacct () {
 
     # Newer tools and unified CLI
     . $acctdir/access_keys.txt
-    export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION
+    export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION AWS_REGION
 
     ec2keypair # reset keys when switch accounts
   fi
