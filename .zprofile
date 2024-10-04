@@ -95,8 +95,10 @@ awsacct () {
     # ec2keypair # reset keys when switch accounts
   fi
 
-  [ -t 0 ] && echo "AWS_ACCOUNT=$AWS_ACCOUNT"
+  [ -t 0 ] && env | grep '^AWS_'
 }
+
+[ -d "$HOME/.awsacct/default" ] && awsacct `readlink "$HOME/.awsacct/default"`
 
 # Prompt in zsh
 autoload -U promptinit && promptinit && prompt redhat
