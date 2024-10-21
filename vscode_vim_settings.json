@@ -1,0 +1,24 @@
+{
+    "workbench.colorTheme": "Default Dark+",
+    "editor.accessibilitySupport": "off",
+    "vim.handleKeys": {
+        "<C-d>": true,
+        "<C-s>": false,
+        "<C-z>": false
+    },
+    "vim.useSystemClipboard": true,
+    "vim.useCtrlKeys": true,
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": ["u"],
+            "commands": ["undo"]
+        },
+        {
+            "before": ["<C-r>"],
+            "commands": ["redo"]
+        }
+    ],
+    "vim.insertModeKeyBindingsNonRecursive": [
+        
+    ]
+}
