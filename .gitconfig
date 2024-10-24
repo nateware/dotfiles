@@ -7,6 +7,9 @@
   st = status
   up = pull
   pu = push -u origin
+	ca = "!f() { git add -A && git commit -m \"$@\"; }; f"
+	cap = "!f() { git add -A && git commit -m \"$@\" && git push; }; f"
+	cmp = "!f() { git commit -m \"$@\" && git push; }; f"
   rv = checkout --
   br = branch -a
   hard = reset --hard origin/master
