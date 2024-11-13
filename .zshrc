@@ -79,7 +79,9 @@ export OS=`uname`
 [ -s $HOME/.nvm/nvm.sh ] && . $HOME/.nvm/nvm.sh # This loads NVM
 
 export EDITOR='vim'
-export PS1=$'\033[36m%n\033[m@\033[32m%m:\033[33;1m%~\033[m\$ '
+#export PS1=$'\033[36m%n\033[m@\033[32m%m:\033[33;1m%~\033[m\$ '
+#export PS1=$'\033[36m%n\033[m@\033[32m%m:\033[33;1m%~\033[m\$ '
+export PS1='%F{blue}%n%f:%F{yellow}%1~%f%# '
 
 add_path $HOME/Library/Python/3.9/bin
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

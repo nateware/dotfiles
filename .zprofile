@@ -98,7 +98,9 @@ awsacct () {
 [ -d "$HOME/.awsacct/default" ] && awsacct `readlink "$HOME/.awsacct/default"`
 
 # Prompt in zsh
-autoload -U promptinit && promptinit && prompt redhat
+# check PS1 in zshrc
+#autoload -U promptinit && promptinit && prompt redhat
+autoload -U promptinit && promptinit
 
 # Azure autocomplete
 # Setting PATH for Python 3.11
