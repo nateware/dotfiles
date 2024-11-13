@@ -49,6 +49,9 @@ wd () {
   fi
 }
 
+# Autocomplete
+#source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+
 # Aliases
 alias ls='\ls -Gh'
 alias ll='ls -al'

@@ -1,10 +1,7 @@
-# Aliases
-alias ls='\ls -Gh'
-alias ll='ls -al'
-alias wget='curl -LO'
-alias ldd='otool -L'
-alias rsync='\rsync --exclude=.svn --exclude=.git --exclude=RCS'
-alias vi='vim -b'
+
+# Autocomplete
+autoload -U +X bashcompinit && bashcompinit
+autoload -U +X compinit && compinit
 
 # Homebrew
 [ -f /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -104,9 +101,6 @@ awsacct () {
 autoload -U promptinit && promptinit && prompt redhat
 
 # Azure autocomplete
-autoload bashcompinit && bashcompinit
-source $(brew --prefix)/etc/bash_completion.d/az
-
 # Setting PATH for Python 3.11
 # The original version is saved in .zprofile.pysave
 PATH="/Library/Frameworks/Python.framework/Versions/3.11/bin:${PATH}"
