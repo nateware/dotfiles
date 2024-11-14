@@ -1,93 +1,104 @@
-# ~/.zshrc
-umask 022
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
-# Add to PATH but only if it exists
-add_path () {
-  err=0
-  for p
-  do
-    if [ -d $p ]; then
-      PATH="$p:$PATH"
-    else
-      err=1
-    fi
-  done
-  return $err
-}
+# Path to your Oh My Zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
 
-# Add to LD_LIB_PATH adjusting for platform
-add_lib () {
-  [ -d "$1" ] || return 0
-  if [ "$OS" = Darwin ]; then
-    export DYLD_LIBRARY_PATH="$1:$DYLD_LIBRARY_PATH"
-  else
-    export LD_LIBRARY_PATH="$1:$DYLD_LIBRARY_PATH"
-  fi
-  return 0
-}
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time Oh My Zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+ZSH_THEME="robbyrussell"
 
-# Guess
-add_path_and_lib () {
-  if add_path "$1"; then
-    lib=${1%/bin}/lib
-    add_lib $lib
-  else
-    return 1
-  fi
-}
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in $ZSH/themes/
+# If set to an empty array, this variable will have no effect.
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
-# Change to workspace directory
-wd () {
-  if [ $# -eq 0 ]; then
-    pushd "$HOME/Workspace"
-  elif [ -d "$1" ]; then
-    # tab expansion
-    pushd "$1"
-  else
-    # wildcard
-    pushd "$HOME/Workspace/$1"*
-  fi
-}
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
 
-# Autocomplete
-#source /opt/homebrew/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
 
-# Aliases
-alias ls='\ls -Gh'
-alias ll='ls -al'
-alias wget='curl -LO'
-alias ldd='otool -L'
-alias rsync='\rsync --exclude=.svn --exclude=.git --exclude=RCS'
+# Uncomment one of the following lines to change the auto-update behavior
+# zstyle ':omz:update' mode disabled  # disable automatic updates
+# zstyle ':omz:update' mode auto      # update automatically without asking
+# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
-# Don't want to install rubydocs - TOO SLOW!
-alias gi='gem install --no-ri --no-rdoc'
-alias bi='bundle install --without=production:staging:assets'
-alias bu='bundle update'
-alias be='bundle exec'
-alias ga='git ci -a -m'
-alias gd='git pu && git push -f dev'
-alias gp='git pu'
+# Uncomment the following line to change how often to auto-update (in days).
+# zstyle ':omz:update' frequency 13
 
-# Platform goodness
-export OS=`uname`
-[ "$OS" = Darwin ] && export JAVA_HOME=/Library/Java/Home
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS="true"
 
-# Ruby version manager
-[ -s $HOME/.rvm/scripts/rvm ] && . $HOME/.rvm/scripts/rvm
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
 
-# Node version manager
-[ -s $HOME/.nvm/nvm.sh ] && . $HOME/.nvm/nvm.sh # This loads NVM
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
 
-export EDITOR='vim'
-#export PS1=$'\033[36m%n\033[m@\033[32m%m:\033[33;1m%~\033[m\$ '
-#export PS1=$'\033[36m%n\033[m@\033[32m%m:\033[33;1m%~\033[m\$ '
-export PS1='%F{blue}%n%f:%F{yellow}%1~%f%# '
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
 
-add_path $HOME/Library/Python/3.9/bin
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Uncomment the following line to display red dots whilst waiting for completion.
+# You can also set it to another string to have that shown instead of the default red dots.
+# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
+# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
+# COMPLETION_WAITING_DOTS="true"
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/nateware/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/nateware/google-cloud-sdk/path.zsh.inc'; fi
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
 
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/nateware/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/nateware/google-cloud-sdk/completion.zsh.inc'; fi
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
+# HIST_STAMPS="mm/dd/yyyy"
+
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
+
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git)
+
+source $ZSH/oh-my-zsh.sh
+
+# User configuration
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
+
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='nvim'
+# fi
+
+# Compilation flags
+# export ARCHFLAGS="-arch $(uname -m)"
+
+# Set personal aliases, overriding those provided by Oh My Zsh libs,
+# plugins, and themes. Aliases can be placed here, though Oh My Zsh
+# users are encouraged to define aliases within a top-level file in
+# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
+# - $ZSH_CUSTOM/aliases.zsh
+# - $ZSH_CUSTOM/macos.zsh
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
